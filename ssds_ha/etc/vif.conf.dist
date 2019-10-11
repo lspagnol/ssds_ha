@@ -1,12 +1,18 @@
 # /etc/network/interfaces.d/vif.conf
 
+# Installez le paquet "ifupdown" (les scripts ne sont pas prévus pour
+# fonctionner avec Netplan).
+
 # Penser à ajouter "source /etc/network/interfaces.d/*.conf" à la fin du
 # fichier "/etc/network/interfaces"
 
-# Remplacer "ens10" par le nom de l'interface virtuelle IPv4
+# L'activation et la désactivation des interfaces virtuelles contrôlent
+# le démon Ucarp et les services qui en dépendent (via vif_pre/post).
+
+# Remplacer "ens10" par le nom de l'interface virtuelle IPv4.
 
 # La commande "up" est lancée en arrière plan pour ne pas bloquer
-# l'interface statique
+# l'interface statique.
 
 # Interface virtuelle sur le même réseau que l'interface statique
 # auto ens3:vif

@@ -1,5 +1,5 @@
 # ssds_ha
-Simple HA failover based upon Ucarp
+Simple HA failover between two nodes based upon Ucarp
 
 This script is able to handle IPv4 and IPv6 network.
 

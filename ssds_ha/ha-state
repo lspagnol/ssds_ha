@@ -1,0 +1,27 @@
+#!/bin/bash
+
+source /usr/local/ssds_ha/ha_lib.sh
+
+M="\e[42mmaster\e[0m"
+S="\e[41mslave\e[0m"
+
+# S'assurer que le noeud est actif
+ip addr ls |grep -qF "inet ${V4_VIP}/${V4_VCIDR} "
+if [ ${?} -eq 0 ] ; then
+	if [ ! -z "${V6_VIP}" ] ; then
+        ip addr ls |grep -qF "inet6 ${V6_VIP}/${V6_VCIDR} "
+        if [ ${?} -eq 0 ] ; then
+			[ "${1}" = "-q" ] || echo -e "${M}"
+			exit 0
+		else
+			[ "${1}" = "-q" ] || echo -e "${S}"
+			exit 1
+		fi
+	else
+		[ "${1}" = "-q" ] || echo -e "${M}"
+		exit 0
+	fi
+else
+	[ "${1}" = "-q" ] || echo -e "${S}"
+	exit 1
+fi

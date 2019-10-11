@@ -1,0 +1,16 @@
+#!/bin/bash
+
+source /usr/local/ssds_ha/ha_lib.sh
+
+# Options par défaut pour ucarp => "slave"
+OPTS="${SLAVE_ARGS}"
+
+# Modifier les options si un master préemptif est déclaré
+if [ ! -z "${PREEMPT_MASTER}" ] ; then
+	if [ "${PREEMPT_MASTER}" = "${HOSTNAME}" ] ; then
+		OPTS="${MASTER_ARGS}"
+	fi
+fi
+
+# Lancer le démon UCARP
+cmdlog "ucarp -i ${V4_VIF/:*/} -s ${STATIC_IP} -a ${V4_VIP} -v ${VHID} -p ${SECRET} -u /usr/local/ssds_ha/to_master -d /usr/local/ssds_ha/to_slave ${OPTS} -z -n -B"

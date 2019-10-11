@@ -1,0 +1,44 @@
+#!/bin/bash
+
+source /usr/local/ssds_ha/ha_lib.sh
+
+# Commandes "PRE-UP"
+if [ ! -z "${VIF_PREUP}" ] ; then
+	if [ -f ${VIF_PREUP} ] ; then
+		source ${VIF_PREUP}
+	fi
+fi
+
+# Activer l'IPv4 virtuelle
+cmdlog "ip addr add dev ${V4_VIF/:*/} ${V4_VIP}/${V4_VCIDR}"
+
+if [ "${STATIC_IF}" != "${V4_VIF/:*/}" ] ; then
+	# Mise en place routage IPv4
+	cmdlog "ip rule add from ${V4_VNET}/${V4_VCIDR} lookup ${V4_VRT}"
+	cmdlog "ip route add ${V4_VNET}/${V4_VCIDR} dev ${V4_VIF} table ${V4_VRT}"
+	cmdlog "ip route add default via ${V4_VGW} dev ${V4_VIF} table ${V4_VRT}"
+fi
+
+# Activer l'IPv6 virtuelle
+if [ ! -z "${V6_IF}" ] && [ ! -z "${V6_VIP}" ] && [ ! -z "${V6_VCIDR}" ] ; then
+
+	# Activer l'interface
+	cmdlog "ip link set up ${V6_IF}"
+
+	# Désactiver l'autoconf IPv6
+	cmdlog "sysctl net.ipv6.conf.${V6_IF}.autoconf=0"
+
+	# Désactiver le DAD (bascule SLAVE -> MASTER préemptif)
+	cmdlog "sysctl net.ipv6.conf.${V6_IF}.accept_dad=0"
+
+	# Activer l'IPv6 virtuelle
+	cmdlog "ip addr add dev ${V6_IF} ${V6_VIP}/${V6_VCIDR}"
+
+fi	
+
+# Commandes "POST-UP"
+if [ ! -z "${VIF_POSTUP}" ] ; then
+	if [ -f ${VIF_POSTUP} ] ; then
+		source ${VIF_POSTUP}
+	fi
+fi

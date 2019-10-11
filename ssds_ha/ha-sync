@@ -1,0 +1,28 @@
+#!/bin/bash
+
+source /usr/local/ssds_ha/ha_lib.sh
+
+# S'assurer que le noeud est actif
+ha-state -q
+if [ ${?} -eq 0 ] ; then
+
+	# Si le HA est en mode préemptif, les confs ne sont synchronisées que
+	# depuis le noeud préemptif
+	if [ ! -z "${PREEMPT_MASTER}" ] ; then
+		if [ "${PREEMPT_MASTER}" != "${HOSTNAME}" ] ; then
+			echo "host is not 'preemptive master " |logger -t ssds_ha
+			exit
+		fi
+	fi
+
+	echo "host is 'master' => sync HA confs" |logger -t ssds_ha
+	for peer in ${PEERS} ; do
+		if [ "${peer}" != "${HOSTNAME}" ] ; then
+			for conf in ${CONFS} ; do
+				rsync -a --delete ${conf} ${peer}:${conf} 2>&1
+			done
+		fi
+	done
+else
+	echo "host is 'slave'" |logger -t ssds_ha
+fi

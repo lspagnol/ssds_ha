@@ -1,0 +1,21 @@
+# /etc/network/interfaces.d/vif.conf
+
+# Penser à ajouter "source /etc/network/interfaces.d/*.conf" à la fin du
+# fichier "/etc/network/interfaces"
+
+# Remplacer "ens10" par le nom de l'interface virtuelle IPv4
+
+# La commande "up" est lancée en arrière plan pour ne pas bloquer
+# l'interface statique
+
+# Interface virtuelle sur le même réseau que l'interface statique
+# auto ens3:vif
+#  iface ens3:vif inet manual
+#  up     /usr/local/ssds_ha/vif_up &
+#  down   /usr/local/ssds_ha/vif_down
+
+# Interface virtuelle sur un réseau différent de l'interface statique
+# auto ens10
+#  iface ens10 inet manual
+#  up     /usr/local/ssds_ha/vif_up &
+#  down   /usr/local/ssds_ha/vif_down

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+source /usr/local/ssds_ha/ha_lib.sh
+
+# Commandes "PRE-DOWN"
+if [ ! -z "${VIF_PREDOWN}" ] ; then
+	if [ -f ${VIF_PREDOWN} ] ; then
+		source ${VIF_PREDOWN}
+	fi
+fi
+
+# Désactiver l'IPv6 virtuelle
+if [ ! -z "${V6_IF}" ] && [ ! -z "${V6_VIP}" ] && [ ! -z "${V6_VCIDR}" ] ; then
+
+	# Supprimer l'adresse IPv6
+	cmdlog "ip addr del dev ${V6_IF} ${V6_VIP}/${V6_VCIDR}"
+
+	# Désactiver l'interface
+	cmdlog "ip link set down ${V6_IF}"
+
+fi
+
+if [ "${STATIC_IF}" != "${V4_VIF/:*/}" ] ; then
+	# Suppression du routage IPv4
+	if [ ! -z "$(ip route show table ${V4_VRT})" ] ; then
+		cmdlog "ip route del default via ${V4_VGW} dev ${V4_VIF} table ${V4_VRT}"
+		cmdlog "ip route del ${V4_VNET}/${V4_VCIDR} dev ${V4_VIF} table ${V4_VRT}"
+	fi
+	cmdlog "ip rule del from ${V4_VNET}/${V4_VCIDR} lookup ${V4_VRT}"
+fi
+
+# Désactiver l'IPv4 virtuelle
+ip addr ls ${V4_VIF/:*/} |grep -q "inet ${V4_VIP}/${V4_VCIDR} " && cmdlog "ip addr del dev ${V4_VIF/:*/} ${V4_VIP}/${V4_VCIDR}"
+
+# Commandes "POST-DOWN"
+if [ ! -z "${VIF_POSTDOWN}" ] ; then
+	if [ -f ${VIF_POSTDOWN} ] ; then
+		source ${VIF_POSTDOWN}
+	fi
+fi

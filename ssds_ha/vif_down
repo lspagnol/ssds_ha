@@ -1,0 +1,6 @@
+#!/bin/bash
+
+source /usr/local/ssds_ha/ha_lib.sh
+
+cmdlog "killall ucarp"
+ip addr ls ${V4_VIF/:*/} |grep -q "inet ${V4_VIP}/${V4_VCIDR} " && cmdlog "ip addr del dev ${V4_VIF/:*/} ${V4_VIP}/${V4_VCIDR}"

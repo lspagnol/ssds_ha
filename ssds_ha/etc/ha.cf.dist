@@ -1,0 +1,73 @@
+# Noeuds du cluster HA (indiquer des hostnames)
+PEERS='
+peer1
+peer2
+'
+# Le HA fonctionne en mode actif/passif. La bascule MASTER/SLAVE est
+# automatique. Il peut être configuré en mode "préemptif".
+# Un MASTER préemptif est prioritaire. S'il devient indisponible, le
+# noeud SLAVE passe en mode MASTER. Si le MASTER préemptif est à nouveau
+# disponible, il reprend la main automatiquement.
+
+# Pour configurer un MASTER préemptif:
+# 1 -> décommetner la variable "PREEMPT_MASTER" pour indiquer le nom du
+#      noeud préemptif
+# 2 -> décommenter les variables "MASTER_ARGS" et "SLAVE_ARGS"
+# Si vous ne voulez pas de MASTER préemptif, commentez les variables
+# "PREEMPT_MASTER", "MASTER_ARGS" et "SLAVE_ARGS"
+#PREEMPT_MASTER='peer1'
+#MASTER_ARGS='-P -b 1'
+#SLAVE_ARGS='-b 2'
+
+# Configurations à synchroniser via la commande "ha-sync".
+# Si le HA est en mode préemptif, les confs ne sont synchronisées que
+# depuis le noeud préemptif.
+# La première conf à synchroniser est celle du HA
+# Attention à ne pas oublier "/" à la fin pour les répertoires !
+CONFS='
+/usr/local/ssds_ha/etc/
+'
+
+# Interface réseau "statique" (interface principale, pas celle du HA)
+STATIC_IF=ens3
+
+# Mot de passe partagé
+# Il doit être identique sur tous les noeuds
+SECRET='xxxxxxxxxxxxxxxxxxxx'
+
+# ID du serveur virtel (1 à 256)
+# La valeur doit être la même sur tous les noeuds
+# **ATTENTION** le VHID doit être unique pour une instance HA
+VHID='xx'
+
+# Include ce fichier de command AVANT l'activation de l'interface virtuelle
+#VIF_PREUP='/usr/local/ssds_ha/etc/vif_preup'
+
+# Include ce fichier de command APRES l'activation de l'interface virtuelle
+VIF_POSTUP='/usr/local/ssds_ha/etc/vif_postup'
+
+# Include ce fichier de command AVANT la désactivation de l'interface virtuelle
+VIF_PREDOWN='/usr/local/ssds_ha/etc/vif_predown'
+
+# Include ce fichier de command APRES la désactivation de l'interface virtuelle
+#VIF_POSTDOWN='/usr/local/ssds_ha/etc/vif_postdown'
+
+# Interface réseau de l'adresse IPv4 virtuelle
+# V4_VIF='ens3:vif'
+V4_VIF='ens10'
+
+# Adresse IPv4 virtuelle (adresse/CIDR)
+V4_VIP='a.b.c.d/24'
+
+# Passerelle de l'IPv4 virtuelle
+V4_VGW='a.b.c.254'
+
+# Numéro de table de routage IPv4
+# Il n'a pas d'importance fonctionnelle
+V4_VRT='xx'
+
+# Interface réseau de l'adresse IPv6 virtuelle
+V6_IF='ens11'
+
+# Adresse IPv6 virtuelle (adresse/CIDR)
+V6_VIP='aa::bb/64'

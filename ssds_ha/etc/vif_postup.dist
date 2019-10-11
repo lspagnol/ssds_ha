@@ -1,7 +1,10 @@
-# Commandes à exécuter lors de la bascule en mode "actif".
+# Commandes à exécuter lors de la bascule en mode "actif", juste après
+# l'activation de l'interface virtuelle.
+
 # Dans cet exemple: démarrage des démons Haproxy et Nginx
 # Pensez à les désactiver du démarrage automatique !
 # -> systemctl disable haproxy.service
 # -> systemctl disable nginx.service
+
 systemctl start haproxy.service
 systemctl start nginx.service

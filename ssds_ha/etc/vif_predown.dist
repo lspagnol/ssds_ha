@@ -1,2 +1,6 @@
+# Commandes à exécuter lors de la bascule en mode "passif", juste avant
+# la désactivation de l'interface virtuelle.
+
+# Dans cet exemple: arrêt des démons Haproxy et Nginx
 systemctl stop nginx.service
 systemctl stop haproxy.service
